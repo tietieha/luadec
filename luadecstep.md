@@ -1,6 +1,6 @@
 [#反编译lua字节码](https://blog.palug.cn/3000.html)
 
-1. 首先看到安装包内有共享库libxlua.so,可以知道xlua版本号
+1. 首先看到安装包内有共享库libxlua.so,可以知道xlua版本号,关键字:LuaVersion
 2. 测试
 > - 如果报错:format mismatch in precompiled chunk
 > - 自己编译一个helloworld.lua比较一下
