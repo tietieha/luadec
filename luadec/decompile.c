@@ -1881,7 +1881,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 		if (o == OP_CLOSE) {
 			int startreg = a;
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		if (o == OP_JMP && a > 0) {
 			// instead OP_CLOSE in 5.2 : if (A) close all upvalues >= R(A-1)
 			int startreg = a - 1;
@@ -1896,7 +1896,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 			// OP_TFORLOOP /* A C	R(A+3), ... ,R(A+2+C) := R(A)(R(A+1), R(A+2));if R(A+3) ~= nil then R(A+2)=R(A+3) else pc++	*/
 			// OP_JMP /* sBx	pc += sBx */
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		if (o == OP_TFORLOOP) {
 			// OP_TFORCALL /* A C	R(A+3), ... ,R(A+2+C) := R(A)(R(A+1), R(A+2)); */
 			// OP_TFORLOOP /* A sBx	if R(A+1) ~= nil then { R(A)=R(A+1); pc += sBx } */
@@ -2019,7 +2019,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 		if (pc == 0) {
 			int ixx, num_nil = -1;
 			switch (o) {
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 				case OP_SETTABUP:
 					if (!ISK(b)) {
 						num_nil = b;
@@ -2180,7 +2180,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 			free(ctt);
 			break;
 		}
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_LOADKX:
 		{
 			int ax = GETARG_Ax(code[pc+1]);
@@ -2193,7 +2193,12 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 		case OP_EXTRAARG:
 			break;
 #endif
+#if LUA_VERSION_NUM == 501 || LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
 		case OP_LOADBOOL:
+#endif
+#if LUA_VERSION_NUM == 504
+		case OP_LOADFALSE:
+#endif
 		{
 			if ((F->bools.size == 0) || (c==0)) {
 				/*
@@ -2226,7 +2231,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 			// 5.1	A B	R(A) to R(B) := nil
 			rb = b;
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 			// 5.2	A B	R(A) to R(A+B) := nil
 			rb = a + b;
 #endif
@@ -2271,7 +2276,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 			break;
 		}
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_GETTABUP:
 		{
 			/*	A B C	R(A) := UpValue[B][RK(C)]			*/
@@ -2319,7 +2324,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 			break;
 		}
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_SETTABUP:
 		{
 			/*	A B C	UpValue[A][RK(B)] := RK(C)			*/
@@ -2411,7 +2416,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 		case OP_DIV:
 		case OP_POW:
 		case OP_MOD:
-#if LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_IDIV:
 		case OP_BAND:
 		case OP_BOR:
@@ -2448,7 +2453,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 		case OP_UNM:
 		case OP_NOT:
 		case OP_LEN:
-#if LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_BNOT:
 #endif
 		{
@@ -2594,7 +2599,7 @@ char* ProcessCode(Proto* f, int indent, int func_checking, char* funcnumstr) {
 				AddAstStatement(F, tforstmt);
 				F->currStmt = tforstmt;
 				break;
-			} else if (sbc == 2 && GET_OPCODE(code[pc+2]) == OP_LOADBOOL) {
+			} else if (sbc == 2 && GET_OPCODE(code[pc+2]) != OP_LOADFALSE) {
 				/*
 				* y = (a > b or c) -- assigne statement may be bool or value
 				* JMP 2
@@ -2925,7 +2930,7 @@ LOGIC_NEXT_JMP:
 			ignoreNext = 1;
 			break;
 		}
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_TFORLOOP:
 			break;
 #endif
@@ -3018,7 +3023,7 @@ LOGIC_NEXT_JMP:
 #if LUA_VERSION_NUM == 501
 				c = i_next_arg;
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 				if (GET_OPCODE(i_next_arg) == OP_EXTRAARG) {
 					c = GETARG_Ax(i_next_arg);
 				} else {
@@ -3075,14 +3080,14 @@ LOGIC_NEXT_JMP:
 					OpCode op = GET_OPCODE(ins);
 					int b = GETARG_B(ins);
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 					Upvaldesc upval = cf->upvalues[i];
 					int b = upval.idx;
 #endif
 #if LUA_VERSION_NUM == 501
 					if (op == OP_MOVE) {
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 					if (upval.instack == 1) {
 #endif
 						// Rvar[b] is enough
@@ -3099,7 +3104,7 @@ LOGIC_NEXT_JMP:
 #if LUA_VERSION_NUM == 501
 					} else if (op == OP_GETUPVAL) {
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 					} else if (upval.instack == 0) {
 #endif
 						// Get name from upvalue name

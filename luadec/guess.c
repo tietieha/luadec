@@ -258,17 +258,22 @@ int luaU_guess_locals(Proto* f, int main) {
 			setregto = b;
 			break;
 		case OP_LOADK:
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_LOADKX:
 #endif
 		case OP_GETUPVAL:
 #if LUA_VERSION_NUM == 501
 		case OP_GETGLOBAL:
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_GETTABUP:
 #endif
+#if LUA_VERSION_NUM == 501 || LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
 		case OP_LOADBOOL:
+#endif
+#if LUA_VERSION_NUM == 504
+		case OP_LOADFALSE:
+#endif
 		case OP_NEWTABLE:
 		case OP_CLOSURE:
 			setreg = a;
@@ -286,7 +291,7 @@ int luaU_guess_locals(Proto* f, int main) {
 		case OP_SETUPVAL:
 			loadreg = a;
 			break;
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_SETTABUP:
 			if (!ISK(b)) {
 				loadreg2 = b;
@@ -434,7 +439,7 @@ int luaU_guess_locals(Proto* f, int main) {
 			}
 			break;
 		case OP_FORLOOP:
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_TFORCALL:
 #endif
 		case OP_TFORLOOP:
@@ -491,7 +496,7 @@ int luaU_guess_locals(Proto* f, int main) {
 #if LUA_VERSION_NUM == 501
 		case OP_CLOSE:
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_EXTRAARG:
 #endif
 		default:

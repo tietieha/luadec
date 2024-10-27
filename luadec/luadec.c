@@ -366,7 +366,7 @@ static void strip(lua_State* L, Proto* f) {
 	luadec_freearray(L, f->upvalues, f->sizeupvalues, TString*);
 	f->upvalues=NULL; f->sizeupvalues=0;
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 	for (i=0; i<f->sizeupvalues; i++) {
 		f->upvalues[i].name=luaS_new(L, "");
 	}

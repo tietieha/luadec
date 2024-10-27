@@ -97,7 +97,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			tmpconstant1 = DecompileConstant(f,bc);
 			StringBuffer_printf(lend,"R%d := %s",a,tmpconstant1);
 			break;
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_LOADKX:
 		{
 			/*	A 	R(A) := Kst(extra arg)				*/
@@ -115,7 +115,12 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			break;
 		}
 #endif
+#if LUA_VERSION_NUM == 501 || LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
 		case OP_LOADBOOL:
+#endif
+#if LUA_VERSION_NUM == 504
+		case OP_LOADFALSE:
+#endif
 			/*	A B C	R(A) := (Bool)B; if (C) pc++			*/
 			sprintf(line,"R%d %d %d",a,b,c);
 			if (c) {
@@ -131,7 +136,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			int rb = b;
 			sprintf(line, "R%d R%d", a, b);
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 			/*	A B	R(A), ..., R(A+B) := nil		*/
 			int rb = a + b;
 			sprintf(line, "R%d %d", a, b);
@@ -167,7 +172,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			StringBuffer_printf(lend,"R%d := %s",a,GLOBAL(bc));
 			break;
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_GETTABUP:
 			/*	A B C	R(A) := UpValue[B][RK(C)]			*/
 			sprintf(line,"R%d U%d %c%d",a,b,CC(c),CV(c));
@@ -188,7 +193,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			StringBuffer_printf(lend,"%s := R%d",GLOBAL(bc),a);
 			break;
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_SETTABUP:
 			/*	A B C	UpValue[A][RK(B)] := RK(C)			*/
 			sprintf(line,"U%d %c%d %c%d",a,CC(b),CV(b),CC(c),CV(c));
@@ -232,7 +237,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			/*	A B C	R(A) := RK(B) % RK(C)				*/
 		case OP_MOD:
 			/*	A B C	R(A) := RK(B) ^ RK(C)				*/
-#if LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_IDIV:
 			/*	A B C	R(A) := RK(B) // RK(C)				*/
 		case OP_BAND:
@@ -257,7 +262,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			/*	A B	R(A) := not R(B)				*/
 		case OP_LEN:
 			/*	A B	R(A) := length of R(B)				*/
-#if LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_BNOT:
 			/*	A B	R(A) := ~R(B)					*/
 #endif
@@ -274,7 +279,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			dest = pc + sbc + 1;
 			sprintf(line, "%d", sbc);
 			StringBuffer_printf(lend, "PC += %d (goto %d)", sbc, dest);
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 			// instead OP_CLOSE in 5.2 : if (A) close all upvalues >= R(A-1)
 			// lua-5.2/src/lopcodes.h line 199 is wrong. See lua-5.2/src/lvm.c line 504:
 			// if (a > 0) luaF_close(L, ci->u.l.base + a - 1);
@@ -377,7 +382,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 			StringBuffer_addPrintf(lend, "; if R%d ~= nil then R%d := R%d else goto %d", a+3, a+2, a+3, pc+2);
 #endif
 			break;
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 		case OP_TFORLOOP:
 			/*	A sBx	if R(A+1) ~= nil then { R(A)=R(A+1); pc += sBx }*/
 			dest = pc + sbc + 1;
@@ -396,7 +401,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 				realc = i_next_arg;
 				ignoreNext = 1;
 #endif
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 				if (GET_OPCODE(i_next_arg) == OP_EXTRAARG) {
 					realc = GETARG_Ax(i_next_arg);
 				} else {
@@ -417,7 +422,7 @@ void luadec_disassemble(Proto* fwork, int dflag, const char* name) {
 				StringBuffer_addPrintf(lend, " ; R(a)[(c-1)*FPF+i] := R(a+i), 1 <= i <= b, a=%d, b=%d, c=%d, FPF=%d", a, b, c, LFIELDS_PER_FLUSH);
 			} else {
 				StringBuffer_addPrintf(lend, " ; R(a)[(realc-1)*FPF+i] := R(a+i), 1 <= i <= b, a=%d, b=%d, c=%d, realc=%u, FPF=%d", a, b, c, realc, LFIELDS_PER_FLUSH);
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
 				if (!next_is_extraarg) {
 					StringBuffer_add(lend, " ; Error: SETLIST with c==0, but not followed by EXTRAARG.");
 				}
