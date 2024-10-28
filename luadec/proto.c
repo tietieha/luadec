@@ -24,7 +24,7 @@ Inst extractInstruction(Instruction i) {
 	inst.c = GETARG_C(i);
 	inst.bx = GETARG_Bx(i);
 	inst.sbx = GETARG_sBx(i);
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
 	inst.ax = GETARG_Ax(i);
 #endif
 	return inst;
@@ -42,7 +42,7 @@ Instruction assembleInstruction(Inst inst) {
 	case iAsBx:
 		i = CREATE_ABx(inst.op, inst.a, inst.sbx);
 		break;
-#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
+#if LUA_VERSION_NUM == 502 || LUA_VERSION_NUM == 503
 	case iAx:
 		i = CREATE_Ax(inst.op, inst.ax);
 		break;
@@ -67,7 +67,7 @@ void InitOperators() {
 	operators[OP_ADD] = "+"; priorities[OP_ADD] = 4;
 	operators[OP_SUB] = "-"; priorities[OP_SUB] = 4;
 	operators[OP_CONCAT] = ".."; priorities[OP_CONCAT] = 5;
-#if LUA_VERSION_NUM == 503 || LUA_VERSION_NUM == 504
+#if LUA_VERSION_NUM == 503
 	operators[OP_BNOT] = "~"; priorities[OP_BNOT] = 2;
 	operators[OP_IDIV] = "//"; priorities[OP_IDIV] = 3;
 	operators[OP_SHL] = "<<"; priorities[OP_SHL] = 6;
